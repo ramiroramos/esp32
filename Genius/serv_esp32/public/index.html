@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen'
+        href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web-socket-js/1.0.0/web_socket.min.js"
+        integrity="sha512-jtr9/t8rtBf1Sv832XjG1kAtUECQCqFnTAJWccL8CSC82VGzkPPih8rjtOfiiRKgqLXpLA1H/uQ/nq2bkHGWTQ=="
+        crossorigin="anonymous"></script>
+    <style>
+        .card {
+            position: absolute;
+            z-index: 99999999;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="game-over"></div>
+            <div class="row align-content-center">
+                <div class="col-md-3">
+                    <button data-led="start" class="btn btn-light led">Começar</button>
+                </div>
+                <div class="col-md-3">
+                    <button data-led="0" class="btn btn-primary led">Azul</button>
+                </div>
+                <div class="col-md-3">
+                    <button data-led="1" class="btn btn-success led">Verde</button>
+                </div>
+                <div class="col-md-3">
+                    <button data-led="2" class="btn btn-warning led">Amarelo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        let webSocket = new WebSocket('ws://localhost:3000');
+
+        webSocket.onmessage = function (led) {
+            if (led.data == "Game Over") {
+                $(".game-over").html("<h1 style='color:red;'>Errou! Tente de novo!</h1>");
+            }
+        };
+
+        $(".led").click(function () {
+            $obj = $(this);
+            if ($obj.data("led") == "start") {
+                $(".game-over").html("");
+                $obj.text("Recomeçar")
+            };
+            webSocket.send($obj.data("led"));
+        });
+
+    </script>
+
+</body>
+
+</html>
